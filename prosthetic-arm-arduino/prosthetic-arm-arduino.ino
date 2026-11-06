@@ -4,11 +4,13 @@ Servo indexServo;
 
 const int INDEX_PIN = 2;
 
+String command = "";
+
 void setup() {
   Serial.begin(9600);
   Serial.println("Starting serial monitor\n");
   indexServo.attach(INDEX_PIN);
-  indexServo.write(90);
+  indexServo.write(0);
 }
 
 void loop() {
@@ -21,7 +23,6 @@ void loop() {
       command = ""; // Reset command string
     }   
   }
-  indexServo.write(90);
 }
 
 
@@ -30,7 +31,7 @@ void processTwist(String cmd) {
   // {linear}:{angular}
   
   cmd.trim();  // Remove whitespace
-  float scale = 1.0;
+  float scale = 2.0;
   
   int colon1 = cmd.indexOf(':');
   // int colon2 = cmd.indexOf(':', colon1 + 1);
@@ -38,12 +39,8 @@ void processTwist(String cmd) {
   float linearX = cmd.substring(0, colon1).toFloat();
   float angularZ = cmd.substring(colon1 + 1).toFloat();
   
- 
-  
-  if (directive == "joystick_turn_head") { 
-    int position = indexServo.read();
-    position = position + (scale * angularZ);
-    indexServo.write(position);
-  }
+  int position = indexServo.read();
+  position = position + (scale * linearX);
+  indexServo.write(position);
 
 }
